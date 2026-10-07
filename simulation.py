@@ -1,41 +1,30 @@
+import numpy as np
 import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
 
 # constants
 mass = 0.5 #kg
 spring_constant = 1 #N/m
-current_time = 0.0
-time_step = 0.01 # seconds
+time_span = (0,100)
 
 # initial variables
-v_o = 0 # m/s
-x_o = -1.0 # m
+initial_state = (-1.0, 0)
 
 # state lists
-position = [x_o]
-velocity = [v_o]
-time = [0]
-
-def Acceleration_equation(x):
-    return (-spring_constant/mass)*x
 
 
-while(current_time < 100):
-    # Calculate current acceleration, velocity, and position
-    a = Acceleration_equation(position[-1])
-    v = velocity[-1] + time_step * a
-    x = position[-1] + time_step * velocity[-1]
-    current_time += time_step
+def state_derivatives(t, state):
+    x = state[0]
+    v = state[1]
+    return (v, -(spring_constant/mass)*x)
 
-    # add values to the list
-    position.append(x)
-    velocity.append(v)
-    time.append(current_time)
+solution = solve_ivp(state_derivatives, time_span, initial_state)
 
 fig, ax = plt.subplots(1,2, layout="constrained")
-ax[0].plot(time, position)
+ax[0].plot(solution.t, solution.y[0])
 ax[0].set_title("position with respect to time")
 
-ax[1].plot(time, velocity)
+ax[1].plot(solution.t, solution.y[1])
 ax[1].set_title("velocity with respect to time")
 
 plt.show()
