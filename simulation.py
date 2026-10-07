@@ -11,9 +11,6 @@ time_span = np.linspace(0,100,1000)
 # initial state
 initial_state = (-1.0, 0)
 
-# analytical solution
-position = []
-
 def analytical_solution(t):
     return initial_state[0]*np.cos(np.sqrt(spring_constant/mass)*t)
 
@@ -22,17 +19,19 @@ def state_derivatives(t, state):
     v = state[1]
     return (v, -(spring_constant/mass)*x)
 
-for i in time_span:
-    position.append(analytical_solution(i))
+position = analytical_solution(time_span)
 
 solution = solve_ivp(state_derivatives, time_int, initial_state, t_eval=time_span)
 
-fig, ax = plt.subplots(2,1, layout="constrained")
+fig, ax = plt.subplots(3,1, layout="constrained")
 ax[0].plot(solution.t, solution.y[0])
 ax[0].plot(time_span, position)
 ax[0].set_title("position with respect to time")
 
 ax[1].plot(solution.t, solution.y[1])
 ax[1].set_title("velocity with respect to time")
+
+ax[2].plot(solution.y[0], solution.y[1])
+ax[2].set_title("position vs velocity")
 
 plt.show()
